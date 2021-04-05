@@ -24,8 +24,14 @@ public class UserService implements UserDetailsService {
 	@Autowired
 	private UserRepository repository;
 	
+	@Autowired
+	private AuthService authService;
+	
 	@Transactional(readOnly = true) // O framework garante a transacao com o BD e nao loca o registro
 	public UserDTO findById(Long id) {
+		
+		authService.validateSelfOrAdmin(id);
+		
 		Optional<User> obj = repository.findById(id);
 		
 		User entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entidade não encontrada"));
